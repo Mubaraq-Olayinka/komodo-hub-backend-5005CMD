@@ -1,0 +1,29 @@
+{
+  "compilerOptions": {
+    /* Core */
+    "target": "ES2020",
+    "module": "commonjs",
+
+    /* Paths */
+    "rootDir": "./src",
+    "outDir": "./dist",
+
+    /* Node compatibility */
+    "lib": ["ES2020"],
+    "types": ["node"],
+
+    /* Interop */
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+
+    /* Strictness */
+    "strict": true,
+    "skipLibCheck": true,
+
+    /* Dev quality */
+    "sourceMap": true,
+
+    /* Optional but useful */
+    "resolveJsonModule": true
+  }
+}
