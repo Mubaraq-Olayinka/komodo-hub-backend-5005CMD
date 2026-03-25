@@ -10,22 +10,18 @@ export const createStudent = async (
   password: string,
   accessCode: string
 ) => {
-  // Verify class access code
   const classSnap = await db
     .collection('classes')
     .where('accessCode', '==', accessCode)
     .limit(1)
     .get();
-
   if (classSnap.empty) throw new Error('Invalid access code');
 
   const classDoc = classSnap.docs[0];
   const classData = classDoc.data();
 
-  // Create Firebase Auth user
   const userRecord = await auth.createUser({ email, password, displayName: fullName });
 
-  // Add to Firestore
   await db.collection('users').doc(userRecord.uid).set({
     fullName,
     email,
@@ -35,10 +31,11 @@ export const createStudent = async (
     createdAt: new Date(),
   });
 
-  // Generate token
-  const token = await auth.createCustomToken(userRecord.uid);
+  // Sign in user via client SDK to get Firebase ID token
+  const userCredential = await signInWithEmailAndPassword(clientAuth, email, password);
+  const idToken = await userCredential.user.getIdToken();
 
-  return { uid: userRecord.uid, token };
+  return { uid: userRecord.uid, token: idToken };
 };
 
 // ================= TEACHER =================
@@ -53,11 +50,9 @@ export const createTeacher = async (
     .where('inviteCode', '==', inviteCode)
     .limit(1)
     .get();
-
   if (orgSnap.empty) throw new Error('Invalid invite code');
 
   const orgDoc = orgSnap.docs[0];
-
   const userRecord = await auth.createUser({ email, password, displayName: fullName });
 
   await db.collection('users').doc(userRecord.uid).set({
@@ -68,9 +63,10 @@ export const createTeacher = async (
     createdAt: new Date(),
   });
 
-  const token = await auth.createCustomToken(userRecord.uid);
+  const userCredential = await signInWithEmailAndPassword(clientAuth, email, password);
+  const idToken = await userCredential.user.getIdToken();
 
-  return { uid: userRecord.uid, token };
+  return { uid: userRecord.uid, token: idToken };
 };
 
 // ================= ORGANIZATION =================
@@ -83,7 +79,6 @@ export const createOrganization = async (
   description: string
 ) => {
   const userRecord = await auth.createUser({ email, password, displayName: fullName });
-
   const inviteCode = generateCode();
 
   const orgRef = await db.collection('organizations').add({
@@ -103,33 +98,30 @@ export const createOrganization = async (
     createdAt: new Date(),
   });
 
-  const token = await auth.createCustomToken(userRecord.uid);
+  const userCredential = await signInWithEmailAndPassword(clientAuth, email, password);
+  const idToken = await userCredential.user.getIdToken();
 
-  return { uid: userRecord.uid, inviteCode, token };
+  return { uid: userRecord.uid, inviteCode, token: idToken };
 };
 
 // ================= LOGIN =================
 export const loginUser = async (email: string, password: string) => {
-  // 1️⃣ Sign in using Firebase client SDK to get an ID token
   const userCredential = await signInWithEmailAndPassword(clientAuth, email, password);
-  const idToken = await userCredential.user.getIdToken(); // ✅ ID token for Authorization header
+  const idToken = await userCredential.user.getIdToken();
 
-  // 2️⃣ Fetch user data from Firestore
   const userSnap = await db
     .collection('users')
     .where('email', '==', email)
     .limit(1)
     .get();
-
   if (userSnap.empty) throw new Error('User not found in database');
 
   const userDoc = userSnap.docs[0];
   const userData = userDoc.data();
 
-  // 3️⃣ Return uid, role, and ID token
   return {
     uid: userDoc.id,
     role: userData.role,
-    token: idToken, // This is what you use in Authorization header
+    token: idToken,
   };
 };
