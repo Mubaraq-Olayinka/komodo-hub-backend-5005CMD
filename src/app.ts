@@ -6,6 +6,8 @@ import morgan from 'morgan';
 import sightingRoutes from './routes/sightingRoutes';
 import speciesRoutes from './routes/speciesRoutes';
 import organizationRoutes from './routes/organizationRoutes';
+import authRoutes from './routes/authRoutes';
+import classRoutes from './routes/classRoutes';
 
 const app = express();
 
@@ -21,5 +23,7 @@ app.get('/', (_req, res) => {
 app.use('/api/sightings', sightingRoutes);
 app.use('/api/species', speciesRoutes);
 app.use('/api/organizations', organizationRoutes);
+app.use('/api/auth', authRoutes);
+app.use('/api/classes', classRoutes);
 
 export default app;
