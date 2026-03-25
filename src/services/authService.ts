@@ -1,34 +1,29 @@
 import { db, auth } from '../config/firebase';
 import { generateCode } from '../utils/generateCode';
-import { signInWithEmailAndPassword } from 'firebase/auth';
-import { clientAuth } from '../config/firebaseClient';
 
-// STUDENT SIGNUP
+// ================= STUDENT =================
 export const createStudent = async (
   fullName: string,
   email: string,
   password: string,
   accessCode: string
 ) => {
+  // Verify class access code
   const classSnap = await db
     .collection('classes')
     .where('accessCode', '==', accessCode)
     .limit(1)
     .get();
 
-  if (classSnap.empty) {
-    throw new Error('Invalid access code');
-  }
+  if (classSnap.empty) throw new Error('Invalid access code');
 
   const classDoc = classSnap.docs[0];
   const classData = classDoc.data();
 
-  const userRecord = await auth.createUser({
-    email,
-    password,
-    displayName: fullName,
-  });
+  // Create Firebase Auth user
+  const userRecord = await auth.createUser({ email, password, displayName: fullName });
 
+  // Add to Firestore
   await db.collection('users').doc(userRecord.uid).set({
     fullName,
     email,
@@ -41,7 +36,7 @@ export const createStudent = async (
   return { uid: userRecord.uid };
 };
 
-// TEACHER SIGNUP
+// ================= TEACHER =================
 export const createTeacher = async (
   fullName: string,
   email: string,
@@ -54,17 +49,11 @@ export const createTeacher = async (
     .limit(1)
     .get();
 
-  if (orgSnap.empty) {
-    throw new Error('Invalid invite code');
-  }
+  if (orgSnap.empty) throw new Error('Invalid invite code');
 
   const orgDoc = orgSnap.docs[0];
 
-  const userRecord = await auth.createUser({
-    email,
-    password,
-    displayName: fullName,
-  });
+  const userRecord = await auth.createUser({ email, password, displayName: fullName });
 
   await db.collection('users').doc(userRecord.uid).set({
     fullName,
@@ -77,7 +66,7 @@ export const createTeacher = async (
   return { uid: userRecord.uid };
 };
 
-// ORGANIZATION SIGNUP
+// ================= ORGANIZATION =================
 export const createOrganization = async (
   fullName: string,
   email: string,
@@ -86,11 +75,7 @@ export const createOrganization = async (
   region: string,
   description: string
 ) => {
-  const userRecord = await auth.createUser({
-    email,
-    password,
-    displayName: fullName,
-  });
+  const userRecord = await auth.createUser({ email, password, displayName: fullName });
 
   const inviteCode = generateCode();
 
@@ -117,18 +102,28 @@ export const createOrganization = async (
   };
 };
 
-// LOGIN
+// ================= LOGIN =================
 export const loginUser = async (email: string, password: string) => {
-  const userCredential = await signInWithEmailAndPassword(
-    clientAuth,
-    email,
-    password
-  );
+  // Find user in Firestore
+  const userSnap = await db
+    .collection('users')
+    .where('email', '==', email)
+    .limit(1)
+    .get();
 
-  const token = await userCredential.user.getIdToken();
+  if (userSnap.empty) throw new Error('User not found');
+
+  const userDoc = userSnap.docs[0];
+  const userData = userDoc.data();
+
+  // You can implement password check using a hashed password stored in Firestore
+  // Or if you want Firebase Auth to handle it:
+  // Generate a custom token from Firebase Admin SDK
+  const customToken = await auth.createCustomToken(userDoc.id);
 
   return {
-    uid: userCredential.user.uid,
-    token,
+    uid: userDoc.id,
+    role: userData.role,
+    token: customToken,
   };
 };

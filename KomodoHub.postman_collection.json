@@ -1,0 +1,224 @@
+{
+  "info": {
+    "name": "Komodo Hub API",
+    "_postman_id": "fcb5f2d8-1234-5678-90ab-cdef12345678",
+    "description": "Postman collection for Komodo Hub backend APIs including auth, species, organizations, sightings, and classes",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Student Signup",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"fullName\": \"John Doe\",\n  \"email\": \"john@example.com\",\n  \"password\": \"password123\",\n  \"accessCode\": \"CLASS123\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/auth/signup/student",
+          "host": ["{{baseUrl}}"],
+          "path": ["auth", "signup", "student"]
+        }
+      }
+    },
+    {
+      "name": "Teacher Signup",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"fullName\": \"Jane Smith\",\n  \"email\": \"jane@example.com\",\n  \"password\": \"password123\",\n  \"inviteCode\": \"ORG123\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/auth/signup/teacher",
+          "host": ["{{baseUrl}}"],
+          "path": ["auth", "signup", "teacher"]
+        }
+      }
+    },
+    {
+      "name": "Organization Signup",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"repFullName\": \"Alice Rep\",\n  \"repEmail\": \"alice@example.com\",\n  \"password\": \"password123\",\n  \"organizationName\": \"Komodo Conservation\",\n  \"region\": \"Java\",\n  \"description\": \"Non-profit organization for animal conservation\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/auth/signup/organization",
+          "host": ["{{baseUrl}}"],
+          "path": ["auth", "signup", "organization"]
+        }
+      }
+    },
+    {
+      "name": "Login",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"john@example.com\",\n  \"password\": \"password123\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/auth/login",
+          "host": ["{{baseUrl}}"],
+          "path": ["auth", "login"]
+        }
+      }
+    },
+    {
+      "name": "Get All Species",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/species",
+          "host": ["{{baseUrl}}"],
+          "path": ["species"]
+        }
+      }
+    },
+    {
+      "name": "Get Species By ID",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/species/:id",
+          "host": ["{{baseUrl}}"],
+          "path": ["species", ":id"]
+        }
+      }
+    },
+    {
+      "name": "Get All Organizations",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/organizations",
+          "host": ["{{baseUrl}}"],
+          "path": ["organizations"]
+        }
+      }
+    },
+    {
+      "name": "Get Organization By ID",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/organizations/:id",
+          "host": ["{{baseUrl}}"],
+          "path": ["organizations", ":id"]
+        }
+      }
+    },
+    {
+      "name": "Create Sighting",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{authToken}}",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"speciesId\": \"abc123\",\n  \"location\": \"Ujung Kulon\",\n  \"description\": \"Saw a tiger near the river\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/sightings",
+          "host": ["{{baseUrl}}"],
+          "path": ["sightings"]
+        }
+      }
+    },
+    {
+      "name": "Get All Sightings",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{authToken}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/sightings",
+          "host": ["{{baseUrl}}"],
+          "path": ["sightings"]
+        }
+      }
+    },
+    {
+      "name": "Create Class",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{authToken}}",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Biology 101\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/classes",
+          "host": ["{{baseUrl}}"],
+          "path": ["classes"]
+        }
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://komodo-hub-backend-5005-cmd.vercel.app/api"
+    },
+    {
+      "key": "authToken",
+      "value": ""
+    }
+  ]
+}
