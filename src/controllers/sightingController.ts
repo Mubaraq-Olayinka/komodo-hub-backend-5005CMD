@@ -4,9 +4,12 @@ import * as service from '../services/sightingService';
 
 export const create = async (req: AuthRequest, res: Response) => {
   try {
+    if (!req.user) {
+      return res.status(401).json({ message: 'Unauthorized: User not found' });
+    }
     const id = await service.createSighting({
       ...req.body,
-      userId: req.user.uid,
+      userId: req.user!.uid,
       createdAt: new Date(),
     });
 
