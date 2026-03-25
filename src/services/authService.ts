@@ -1,5 +1,7 @@
 import { db, auth } from '../config/firebase';
 import { generateCode } from '../utils/generateCode';
+import { clientAuth } from '../config/firebaseClient';
+import { signInWithEmailAndPassword } from 'firebase/auth';
 
 // ================= STUDENT =================
 export const createStudent = async (
@@ -108,24 +110,26 @@ export const createOrganization = async (
 
 // ================= LOGIN =================
 export const loginUser = async (email: string, password: string) => {
-  // Lookup user in Firestore
+  // 1️⃣ Sign in using Firebase client SDK to get an ID token
+  const userCredential = await signInWithEmailAndPassword(clientAuth, email, password);
+  const idToken = await userCredential.user.getIdToken(); // ✅ ID token for Authorization header
+
+  // 2️⃣ Fetch user data from Firestore
   const userSnap = await db
     .collection('users')
     .where('email', '==', email)
     .limit(1)
     .get();
 
-  if (userSnap.empty) throw new Error('User not found');
+  if (userSnap.empty) throw new Error('User not found in database');
 
   const userDoc = userSnap.docs[0];
   const userData = userDoc.data();
 
-  // Generate custom token for login
-  const token = await auth.createCustomToken(userDoc.id);
-
+  // 3️⃣ Return uid, role, and ID token
   return {
     uid: userDoc.id,
     role: userData.role,
-    token,
+    token: idToken, // This is what you use in Authorization header
   };
 };
