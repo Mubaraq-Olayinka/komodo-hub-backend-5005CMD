@@ -1,0 +1,134 @@
+import { db, auth } from '../config/firebase';
+import { generateCode } from '../utils/generateCode';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { clientAuth } from '../config/firebaseClient';
+
+// STUDENT SIGNUP
+export const createStudent = async (
+  fullName: string,
+  email: string,
+  password: string,
+  accessCode: string
+) => {
+  const classSnap = await db
+    .collection('classes')
+    .where('accessCode', '==', accessCode)
+    .limit(1)
+    .get();
+
+  if (classSnap.empty) {
+    throw new Error('Invalid access code');
+  }
+
+  const classDoc = classSnap.docs[0];
+  const classData = classDoc.data();
+
+  const userRecord = await auth.createUser({
+    email,
+    password,
+    displayName: fullName,
+  });
+
+  await db.collection('users').doc(userRecord.uid).set({
+    fullName,
+    email,
+    role: 'student',
+    organizationId: classData.organizationId,
+    classIds: [classDoc.id],
+    createdAt: new Date(),
+  });
+
+  return { uid: userRecord.uid };
+};
+
+// TEACHER SIGNUP
+export const createTeacher = async (
+  fullName: string,
+  email: string,
+  password: string,
+  inviteCode: string
+) => {
+  const orgSnap = await db
+    .collection('organizations')
+    .where('inviteCode', '==', inviteCode)
+    .limit(1)
+    .get();
+
+  if (orgSnap.empty) {
+    throw new Error('Invalid invite code');
+  }
+
+  const orgDoc = orgSnap.docs[0];
+
+  const userRecord = await auth.createUser({
+    email,
+    password,
+    displayName: fullName,
+  });
+
+  await db.collection('users').doc(userRecord.uid).set({
+    fullName,
+    email,
+    role: 'teacher',
+    organizationId: orgDoc.id,
+    createdAt: new Date(),
+  });
+
+  return { uid: userRecord.uid };
+};
+
+// ORGANIZATION SIGNUP
+export const createOrganization = async (
+  fullName: string,
+  email: string,
+  password: string,
+  organizationName: string,
+  region: string,
+  description: string
+) => {
+  const userRecord = await auth.createUser({
+    email,
+    password,
+    displayName: fullName,
+  });
+
+  const inviteCode = generateCode();
+
+  const orgRef = await db.collection('organizations').add({
+    name: organizationName,
+    region,
+    description,
+    createdBy: userRecord.uid,
+    inviteCode,
+    createdAt: new Date(),
+  });
+
+  await db.collection('users').doc(userRecord.uid).set({
+    fullName,
+    email,
+    role: 'org_admin',
+    organizationId: orgRef.id,
+    createdAt: new Date(),
+  });
+
+  return {
+    uid: userRecord.uid,
+    inviteCode,
+  };
+};
+
+// LOGIN
+export const loginUser = async (email: string, password: string) => {
+  const userCredential = await signInWithEmailAndPassword(
+    clientAuth,
+    email,
+    password
+  );
+
+  const token = await userCredential.user.getIdToken();
+
+  return {
+    uid: userCredential.user.uid,
+    token,
+  };
+};
