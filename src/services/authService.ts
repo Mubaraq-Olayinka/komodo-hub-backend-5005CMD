@@ -33,7 +33,10 @@ export const createStudent = async (
     createdAt: new Date(),
   });
 
-  return { uid: userRecord.uid };
+  // Generate token
+  const token = await auth.createCustomToken(userRecord.uid);
+
+  return { uid: userRecord.uid, token };
 };
 
 // ================= TEACHER =================
@@ -63,7 +66,9 @@ export const createTeacher = async (
     createdAt: new Date(),
   });
 
-  return { uid: userRecord.uid };
+  const token = await auth.createCustomToken(userRecord.uid);
+
+  return { uid: userRecord.uid, token };
 };
 
 // ================= ORGANIZATION =================
@@ -96,15 +101,14 @@ export const createOrganization = async (
     createdAt: new Date(),
   });
 
-  return {
-    uid: userRecord.uid,
-    inviteCode,
-  };
+  const token = await auth.createCustomToken(userRecord.uid);
+
+  return { uid: userRecord.uid, inviteCode, token };
 };
 
 // ================= LOGIN =================
 export const loginUser = async (email: string, password: string) => {
-  // Find user in Firestore
+  // Lookup user in Firestore
   const userSnap = await db
     .collection('users')
     .where('email', '==', email)
@@ -116,14 +120,12 @@ export const loginUser = async (email: string, password: string) => {
   const userDoc = userSnap.docs[0];
   const userData = userDoc.data();
 
-  // You can implement password check using a hashed password stored in Firestore
-  // Or if you want Firebase Auth to handle it:
-  // Generate a custom token from Firebase Admin SDK
-  const customToken = await auth.createCustomToken(userDoc.id);
+  // Generate custom token for login
+  const token = await auth.createCustomToken(userDoc.id);
 
   return {
     uid: userDoc.id,
     role: userData.role,
-    token: customToken,
+    token,
   };
 };
