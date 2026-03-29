@@ -8,6 +8,7 @@ import speciesRoutes from './routes/speciesRoutes';
 import organizationRoutes from './routes/organizationRoutes';
 import authRoutes from './routes/authRoutes';
 import classRoutes from './routes/classRoutes';
+import adminRoutes from './routes/adminRoutes';
 
 const app = express();
 
@@ -25,5 +26,6 @@ app.use('/api/species', speciesRoutes);
 app.use('/api/organizations', organizationRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/classes', classRoutes);
+app.use('/api/admin', adminRoutes);
 
 export default app;

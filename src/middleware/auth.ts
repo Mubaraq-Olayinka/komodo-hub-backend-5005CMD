@@ -51,6 +51,10 @@ export const verifyToken = async (
       ...userDoc.data(),
     } as FirebaseUser;
 
+    if (req.user.status === 'suspended') {
+      return res.status(403).json({ message: 'Account suspended' });
+    }
+
     next(); // User verified, proceed
   } catch (error: any) {
     console.error('Auth Middleware Error:', error.message);
@@ -62,7 +66,7 @@ export const verifyToken = async (
  * Optional: Role-based access middleware
  * Usage: requireRole('teacher')
  */
-export const requireRole = (role: 'student' | 'teacher' | 'admin') => {
+export const requireRole = (role: 'student' | 'teacher' | 'org_admin') => {
   return (req: AuthRequest, res: Response, next: NextFunction) => {
     if (!req.user) {
       return res.status(401).json({ message: 'Unauthorized: No user info' });

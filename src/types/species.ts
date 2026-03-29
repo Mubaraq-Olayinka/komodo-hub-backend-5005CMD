@@ -14,7 +14,8 @@ export interface Species {
   habitat: string;
   description: string;
   imageUrl?: string;
-  createdAt: Date;
+  createdAt: string;
+  tags: string[];
 }
 
 export interface SpeciesDetails extends Species {
