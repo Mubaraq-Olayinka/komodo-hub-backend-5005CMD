@@ -82,7 +82,6 @@ export const getTeacherClasses = async (req: AuthRequest, res: Response) => {
     if (!req.user) {
       return res.status(401).json({ message: 'Unauthorized' });
     }
-
     const data = await service.getClassesByTeacher(req.user.uid);
     res.json(data);
   } catch (error: any) {
@@ -95,7 +94,6 @@ export const getAllClasses = async (req: AuthRequest, res: Response) => {
     if (!req.user?.organizationId) {
       return res.status(400).json({ message: 'Organization missing' });
     }
-
     const data = await service.getAllClasses(req.user.organizationId);
     res.json(data);
   } catch (error: any) {

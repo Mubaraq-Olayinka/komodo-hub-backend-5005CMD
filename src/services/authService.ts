@@ -35,7 +35,7 @@ export const createStudent = async (
   const userCredential = await signInWithEmailAndPassword(clientAuth, email, password);
   const idToken = await userCredential.user.getIdToken();
 
-  return { uid: userRecord.uid, token: idToken };
+  return { uid: userRecord.uid, token: idToken, organizationId: classData.organizationId };
 };
 
 // ================= TEACHER =================
@@ -67,7 +67,7 @@ export const createTeacher = async (
   const userCredential = await signInWithEmailAndPassword(clientAuth, email, password);
   const idToken = await userCredential.user.getIdToken();
 
-  return { uid: userRecord.uid, token: idToken };
+  return { uid: userRecord.uid, token: idToken, organizationId: orgDoc.id };
 };
 
 // ================= ORGANIZATION =================
@@ -102,7 +102,7 @@ export const createOrganization = async (
   const userCredential = await signInWithEmailAndPassword(clientAuth, email, password);
   const idToken = await userCredential.user.getIdToken();
 
-  return { uid: userRecord.uid, inviteCode, token: idToken };
+  return { uid: userRecord.uid, inviteCode, token: idToken, organizationId: orgRef.id };
 };
 
 // ================= LOGIN =================
@@ -124,5 +124,6 @@ export const loginUser = async (email: string, password: string) => {
     uid: userDoc.id,
     role: userData.role,
     token: idToken,
+    organizationId: userData.organizationId || null,
   };
 };
