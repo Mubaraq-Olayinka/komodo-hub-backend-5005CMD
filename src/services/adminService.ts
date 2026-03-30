@@ -13,10 +13,12 @@ export const getAllTeachers = async () => {
     return {
       id: doc.id,
       ...data,
-      status: data.status || 'active', // ✅ fallback
+      status: data.status || 'active',
       createdAt: data.createdAt
-        ? new Date(data.createdAt).toISOString()
-        : null, // ✅ normalize
+        ? typeof data.createdAt === 'string'
+          ? data.createdAt
+          : data.createdAt.toDate().toISOString()
+        : null,
     };
   });
 };
