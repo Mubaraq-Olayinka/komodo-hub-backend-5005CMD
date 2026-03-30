@@ -28,7 +28,7 @@ export const createStudent = async (
     role: 'student',
     organizationId: classData.organizationId,
     classIds: [classDoc.id],
-    createdAt: new Date(),
+    createdAt: new Date().toISOString(),
   });
 
   // Sign in user via client SDK to get Firebase ID token
@@ -61,7 +61,7 @@ export const createTeacher = async (
     role: 'teacher',
     organizationId: orgDoc.id,
     status: 'active',
-    createdAt: new Date(),
+    createdAt: new Date().toISOString(),
   });
 
   const userCredential = await signInWithEmailAndPassword(clientAuth, email, password);
@@ -88,7 +88,7 @@ export const createOrganization = async (
     description,
     createdBy: userRecord.uid,
     inviteCode,
-    createdAt: new Date(),
+    createdAt: new Date().toISOString(),
   });
 
   await db.collection('users').doc(userRecord.uid).set({
@@ -96,7 +96,7 @@ export const createOrganization = async (
     email,
     role: 'org_admin',
     organizationId: orgRef.id,
-    createdAt: new Date(),
+    createdAt: new Date().toISOString(),
   });
 
   const userCredential = await signInWithEmailAndPassword(clientAuth, email, password);
