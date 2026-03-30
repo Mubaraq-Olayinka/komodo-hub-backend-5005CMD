@@ -5,7 +5,7 @@ export interface Organization {
   location: string;
   description: string;
   imageUrl?: string;
-  createdAt: Date;
+  createdAt: string;
 }
 
 export interface OrganizationDetails extends Organization {

@@ -60,6 +60,7 @@ export const createTeacher = async (
     email,
     role: 'teacher',
     organizationId: orgDoc.id,
+    status: 'active',
     createdAt: new Date(),
   });
 

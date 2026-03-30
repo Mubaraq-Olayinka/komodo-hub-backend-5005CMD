@@ -1,4 +1,4 @@
-export type UserRole = "student" | "teacher" | "org_admin";
+export type UserRole = 'student' | 'teacher' | 'org_admin';
 
 export interface User {
   id?: string;
@@ -7,5 +7,6 @@ export interface User {
   role: UserRole;
   organizationId?: string;
   classIds?: string[];
-  createdAt: Date;
+  status?: 'active' | 'suspended'; // 👈 add this
+  createdAt: string; // ✅ FIXED
 }
