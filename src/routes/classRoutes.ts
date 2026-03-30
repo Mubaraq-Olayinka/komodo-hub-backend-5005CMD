@@ -14,15 +14,7 @@ const router = Router();
 // ✅ Teacher creates class
 router.post('/', verifyToken, requireRole('teacher'), createClass);
 
-// ✅ Teacher + Admin can view classes
-router.get(
-  '/',
-  verifyToken,
-  requireRole('org_admin'), // OR extend to org_admin later
-  getClasses
-);
-
-router.get('/', verifyToken, requireRole('teacher'), getTeacherClasses);
+router.get('/teacher', verifyToken, requireRole('teacher'), getTeacherClasses);
 
 router.get(
   '/my',
