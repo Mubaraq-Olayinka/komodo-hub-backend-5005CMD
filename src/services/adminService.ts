@@ -7,10 +7,18 @@ export const getAllTeachers = async () => {
     .where('role', '==', 'teacher')
     .get();
 
-  return snapshot.docs.map(doc => ({
-    id: doc.id,
-    ...doc.data(),
-  }));
+  return snapshot.docs.map(doc => {
+    const data = doc.data();
+
+    return {
+      id: doc.id,
+      ...data,
+      status: data.status || 'active', // ✅ fallback
+      createdAt: data.createdAt
+        ? new Date(data.createdAt).toISOString()
+        : null, // ✅ normalize
+    };
+  });
 };
 
 // Suspend teacher
