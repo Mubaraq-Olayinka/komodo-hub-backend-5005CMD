@@ -16,6 +16,7 @@ export interface Species {
   imageUrl?: string;
   createdAt: string;
   tags: string[];
+  organizationId: string;
 }
 
 export interface SpeciesDetails extends Species {

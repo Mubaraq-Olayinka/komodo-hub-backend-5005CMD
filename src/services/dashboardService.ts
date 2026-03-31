@@ -21,7 +21,10 @@ const getAdminStats = async (organizationId: string) => {
         .where("organizationId", "==", organizationId)
         .get(),
 
-      db.collection("species").get(),
+      db
+        .collection("species")
+        .where("organizationId", "==", organizationId)
+        .get(),
     ]);
 
   return {
