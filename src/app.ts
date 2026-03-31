@@ -9,6 +9,7 @@ import organizationRoutes from './routes/organizationRoutes';
 import authRoutes from './routes/authRoutes';
 import classRoutes from './routes/classRoutes';
 import adminRoutes from './routes/adminRoutes';
+import dashboardRoutes from './routes/dashboardRoutes';
 
 const app = express();
 
@@ -27,5 +28,6 @@ app.use('/api/organizations', organizationRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/classes', classRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/dashboard', dashboardRoutes);
 
 export default app;
