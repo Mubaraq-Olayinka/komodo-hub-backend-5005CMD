@@ -24,3 +24,58 @@ export const getOrganizationById = async (id: string): Promise<OrganizationDetai
     highlights: data.highlights || [],
   };
 };
+
+export const updateOrganization = async (
+  id: string,
+  updates: Partial<OrganizationDetails>
+) => {
+  const docRef = db.collection('organizations').doc(id);
+  const doc = await docRef.get();
+
+  if (!doc.exists) {
+    throw new Error('Organization not found');
+  }
+
+  await docRef.update({
+    ...updates,
+  });
+
+  const updatedDoc = await docRef.get();
+
+  return {
+    id: updatedDoc.id,
+    ...(updatedDoc.data() as OrganizationDetails),
+  };
+};
+
+export const getDashboardStats = async (organizationId: string) => {
+  // 🔥 Run queries in parallel
+  const [studentsSnap, teachersSnap, classesSnap, speciesSnap] =
+    await Promise.all([
+      db
+        .collection('users')
+        .where('role', '==', 'student')
+        .where('organizationId', '==', organizationId)
+        .get(),
+
+      db
+        .collection('users')
+        .where('role', '==', 'teacher')
+        .where('organizationId', '==', organizationId)
+        .get(),
+
+      db
+        .collection('classes')
+        .where('organizationId', '==', organizationId)
+        .get(),
+
+      db.collection('species').get(), // global
+    ]);
+
+  return {
+    students: studentsSnap.size,
+    teachers: teachersSnap.size,
+    classes: classesSnap.size,
+    species: speciesSnap.size,
+  };
+};
