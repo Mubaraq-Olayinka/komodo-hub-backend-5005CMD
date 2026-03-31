@@ -47,3 +47,39 @@ export const getSpeciesById = async (id: string): Promise<SpeciesDetails | null>
     quickFact: data.quickFact || { conservationStatus: data.status, category: data.type, region: '' },
   };
 };
+
+export const getSpeciesByOrganization = async (
+  organizationId: string,
+  search?: string,
+  type?: string,
+  status?: string
+): Promise<Species[]> => {
+  let query: FirebaseFirestore.Query = db
+    .collection('species')
+    .where('organizationId', '==', organizationId);
+
+  if (type) {
+    query = query.where('type', '==', type);
+  }
+
+  if (status) {
+    query = query.where('status', '==', status);
+  }
+
+  const snapshot = await query.get();
+
+  let results = snapshot.docs.map(doc => ({
+    id: doc.id,
+    ...(doc.data() as Species),
+  }));
+
+  // 🔍 search (still client-side)
+  if (search) {
+    const term = search.toLowerCase();
+    results = results.filter(s =>
+      s.name.toLowerCase().includes(term)
+    );
+  }
+
+  return results;
+};
