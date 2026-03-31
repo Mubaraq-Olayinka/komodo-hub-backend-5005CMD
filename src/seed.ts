@@ -13,6 +13,7 @@ const dummySpecies: Species[] = [
     imageUrl: "https://images.pexels.com/photos/5969262/pexels-photo-5969262.jpeg?_gl=1*1cva6hz*_ga*MTM2MjIwMTk2NC4xNzcxOTM1NzM4*_ga_8JE65Q40S6*czE3NzQ2MDc4NDEkbzIkZzEkdDE3NzQ2MDgwMjkkajI5JGwwJGgw",
     tags: ["rare", "protected", "indonesia", "rhino"],
     createdAt: new Date().toISOString(),
+    organizationId: ""
   },
   {
     name: "Bali Myna",
@@ -24,6 +25,7 @@ const dummySpecies: Species[] = [
     imageUrl: "https://images.pexels.com/photos/7199367/pexels-photo-7199367.jpeg?_gl=1*g4o3kn*_ga*MTM2MjIwMTk2NC4xNzcxOTM1NzM4*_ga_8JE65Q40S6*czE3NzQ2MDc4NDEkbzIkZzEkdDE3NzQ2MDc5NzMkajI1JGwwJGgw",
     tags: ["rare", "protected", "indonesia", "rhino"],
     createdAt: new Date().toISOString(),
+    organizationId: ""
   },
   {
     name: "Sumatran Tiger",
@@ -35,6 +37,7 @@ const dummySpecies: Species[] = [
     imageUrl: "https://images.pexels.com/photos/68134/tiger-sumatran-sumatran-tiger-tiger-cub-68134.jpeg?_gl=1*172b508*_ga*MTM2MjIwMTk2NC4xNzcxOTM1NzM4*_ga_8JE65Q40S6*czE3NzQ2MDc4NDEkbzIkZzEkdDE3NzQ2MDc5MDAkajEkbDAkaDA.",
     tags: ["bird", "endemic", "bali", "protected"],
     createdAt: new Date().toISOString(),
+    organizationId: ""
   },
 ];
 
