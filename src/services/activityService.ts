@@ -24,6 +24,7 @@ export const createActivity = async (
 
   const activityRef = await db.collection('activities').add({
     classId,
+    className: classData?.name,
     title,
     description,
     dueDate: dueDate || null,
