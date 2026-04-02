@@ -24,6 +24,7 @@ export const createActivity = async (
 
   const activityRef = await db.collection('activities').add({
     classId,
+    className: classData?.name,
     title,
     description,
     dueDate: dueDate || null,
@@ -35,4 +36,40 @@ export const createActivity = async (
   return {
     id: activityRef.id,
   };
+};
+
+export const getActivitiesByTeacher = async (teacherId: string) => {
+  // 1️⃣ Get all classes owned by teacher
+  const classesSnap = await db
+    .collection('classes')
+    .where('teacherId', '==', teacherId)
+    .get();
+
+  const classMap: Record<string, string> = {};
+
+  classesSnap.docs.forEach(doc => {
+    classMap[doc.id] = doc.data().name;
+  });
+
+  const classIds = Object.keys(classMap);
+
+  if (classIds.length === 0) return [];
+
+  // 2️⃣ Get activities for those classes
+  const activitiesSnap = await db
+    .collection('activities')
+    .where('classId', 'in', classIds.slice(0, 10)) // Firestore limit
+    .get();
+
+  return activitiesSnap.docs.map(doc => {
+    const data = doc.data();
+
+    return {
+      id: doc.id,
+      title: data.title,
+      description: data.description,
+      dueDate: data.dueDate || null,
+      className: classMap[data.classId] || 'Unknown Class',
+    };
+  });
 };
