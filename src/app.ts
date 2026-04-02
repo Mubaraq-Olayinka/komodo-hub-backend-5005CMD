@@ -10,6 +10,7 @@ import authRoutes from './routes/authRoutes';
 import classRoutes from './routes/classRoutes';
 import adminRoutes from './routes/adminRoutes';
 import dashboardRoutes from './routes/dashboardRoutes';
+import activityRoutes from './routes/activityRoutes';
 
 const app = express();
 
@@ -29,5 +30,6 @@ app.use('/api/auth', authRoutes);
 app.use('/api/classes', classRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/dashboard', dashboardRoutes);
+app.use('/api/activities', activityRoutes);
 
 export default app;
