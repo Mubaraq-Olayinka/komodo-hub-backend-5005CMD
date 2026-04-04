@@ -47,6 +47,7 @@ export const createSubmission = async (
   // 💾 Save submission
   const submissionRef = await db.collection('submissions').add({
     activityId,
+    activityTitle : activityData?.title,
     studentId,
     content,
     fileUrl,
