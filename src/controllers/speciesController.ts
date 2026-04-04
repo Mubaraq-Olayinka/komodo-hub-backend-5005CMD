@@ -57,3 +57,46 @@ export const getByOrganization = async (
     res.status(500).json({ error: error.message });
   }
 };
+
+export const create = async (req: AuthRequest, res: Response) => {
+  try {
+    if (req.user?.role !== 'teacher') {
+      return res.status(403).json({ message: 'Forbidden: teachers only' });
+    }
+
+    if (!req.user?.organizationId) {
+      return res.status(400).json({ message: 'Organization missing' });
+    }
+
+    const { name, scientificName, status, type, habitat, description, imageUrl, tags, keyThreats, educationalFacts, about, quickFact } = req.body;
+
+    if (!name || !scientificName || !status || !type || !habitat || !description) {
+      return res.status(400).json({ message: 'Missing required fields' });
+    }
+
+    const data = await service.createSpecies({
+      name,
+      scientificName,
+      status,
+      type,
+      habitat,
+      description,
+      imageUrl: imageUrl ?? '',
+      tags: tags ?? [],
+      organizationId: req.user.organizationId,
+      keyThreats: keyThreats ?? [],
+      educationalFacts: educationalFacts ?? [],
+      about: about ?? '',
+      quickFact: {
+        conservationStatus: status,
+        category: type,
+        region: '',
+      },
+    });
+
+    res.status(201).json(data);
+  } catch (error: any) {
+    console.error(error);
+    res.status(500).json({ error: error.message });
+  }
+};

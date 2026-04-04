@@ -83,3 +83,25 @@ export const getSpeciesByOrganization = async (
 
   return results;
 };
+
+
+export const createSpecies = async (
+  data: Omit<SpeciesDetails, 'id' | 'createdAt'>,
+): Promise<SpeciesDetails> => {
+  const newSpecies = {
+    ...data,
+    createdAt: new Date().toISOString(),
+    keyThreats: data.keyThreats ?? [],
+    educationalFacts: data.educationalFacts ?? [],
+    about: data.about ?? '',
+    quickFact: data.quickFact ?? {
+      conservationStatus: data.status,
+      category: data.type,
+      region: '',
+    },
+  };
+
+  const docRef = await db.collection('species').add(newSpecies);
+
+  return { id: docRef.id, ...newSpecies };
+};
