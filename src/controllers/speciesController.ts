@@ -87,10 +87,10 @@ export const create = async (req: AuthRequest, res: Response) => {
       keyThreats: keyThreats ?? [],
       educationalFacts: educationalFacts ?? [],
       about: about ?? '',
-      quickFact: {
+      quickFact: quickFact ?? {
         conservationStatus: status,
         category: type,
-        region: '',
+        region: quickFact.region ?? '',
       },
     });
 
