@@ -105,3 +105,26 @@ export const createSpecies = async (
 
   return { id: docRef.id, ...newSpecies };
 };
+
+export const updateSpecies = async (
+  id: string,
+  data: Partial<Omit<SpeciesDetails, 'id' | 'createdAt'>>,
+): Promise<SpeciesDetails> => {
+  await db.collection('species').doc(id).update(data);
+
+  const updated = await db.collection('species').doc(id).get();
+  const updatedData = updated.data() as SpeciesDetails;
+
+  return {
+    id: updated.id,
+    ...updatedData,
+    keyThreats: updatedData.keyThreats || [],
+    educationalFacts: updatedData.educationalFacts || [],
+    about: updatedData.about || '',
+    quickFact: updatedData.quickFact || {
+      conservationStatus: updatedData.status,
+      category: updatedData.type,
+      region: '',
+    },
+  };
+};
