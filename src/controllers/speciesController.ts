@@ -100,3 +100,53 @@ export const create = async (req: AuthRequest, res: Response) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+export const update = async (req: AuthRequest, res: Response) => {
+  try {
+    if (req.user?.role !== 'teacher') {
+      return res.status(403).json({ message: 'Forbidden: teachers only' });
+    }
+
+    const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
+
+    // make sure the species belongs to the teacher's org
+    const existing = await service.getSpeciesById(id);
+    if (!existing) {
+      return res.status(404).json({ message: 'Species not found' });
+    }
+    if (existing.organizationId !== req.user?.organizationId) {
+      return res.status(403).json({ message: 'Forbidden: not your organization' });
+    }
+
+    const {
+      name, scientificName, status, type, habitat, description,
+      imageUrl, tags, keyThreats, educationalFacts, about, quickFact,
+    } = req.body;
+
+    const data = await service.updateSpecies(id, {
+      ...(name && { name }),
+      ...(scientificName && { scientificName }),
+      ...(status && { status }),
+      ...(type && { type }),
+      ...(habitat && { habitat }),
+      ...(description && { description }),
+      ...(imageUrl !== undefined && { imageUrl }),
+      ...(tags && { tags }),
+      ...(keyThreats && { keyThreats }),
+      ...(educationalFacts && { educationalFacts }),
+      ...(about && { about }),
+      ...(quickFact && {
+        quickFact: {
+          conservationStatus: status ?? existing.status,
+          category: type ?? existing.type,
+          region: quickFact.region,
+        },
+      }),
+    });
+
+    res.json(data);
+  } catch (error: any) {
+    console.error(error);
+    res.status(500).json({ error: error.message });
+  }
+};
