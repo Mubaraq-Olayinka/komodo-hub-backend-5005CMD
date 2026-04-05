@@ -73,3 +73,38 @@ export const getActivitiesByTeacher = async (teacherId: string) => {
     };
   });
 };
+
+export const getActivitiesByStudent = async (classIds: string[]) => {
+  if (classIds.length === 0) return [];
+
+  const activities: any[] = [];
+
+  // Batch in chunks of 10 (Firestore `in` limit)
+  const chunks = [];
+  for (let i = 0; i < classIds.length; i += 10) {
+    chunks.push(classIds.slice(i, i + 10));
+  }
+
+  for (const chunk of chunks) {
+    const activitiesSnap = await db
+      .collection("activities")
+      .where("classId", "in", chunk)
+      .orderBy("createdAt", "desc")
+      .get();
+
+    activitiesSnap.docs.forEach((doc) => {
+      const data = doc.data();
+      activities.push({
+        id: doc.id,
+        title: data.title,
+        description: data.description,
+        dueDate: data.dueDate || null,
+        className: data.className,
+        classId: data.classId,
+        createdAt: data.createdAt,
+      });
+    });
+  }
+
+  return activities;
+};

@@ -2,6 +2,7 @@ import { Router } from "express";
 import { verifyToken, requireRole } from "../middleware/auth";
 import {
   createActivity,
+  getStudentActivities,
   getTeacherActivities,
 } from "../controllers/activityController";
 
@@ -15,5 +16,6 @@ router.get(
   requireRole("teacher"),
   getTeacherActivities,
 );
+router.get("/student", verifyToken, requireRole("student"), getStudentActivities);
 
 export default router;

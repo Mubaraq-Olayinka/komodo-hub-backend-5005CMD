@@ -10,7 +10,7 @@ export const create = async (req: AuthRequest, res: Response) => {
     const id = await service.createSighting({
       ...req.body,
       userId: req.user!.uid,
-      createdAt: new Date(),
+      createdAt: new Date().toISOString(),
     });
 
     res.status(201).json({ id });
@@ -19,12 +19,15 @@ export const create = async (req: AuthRequest, res: Response) => {
   }
 };
 
-export const getAll = async (_req: AuthRequest, res: Response) => {
+export const getAll = async (req: AuthRequest, res: Response) => {
   try {
-    const data = await service.getSightings();
+    if (!req.user) {
+      return res.status(401).json({ message: 'Unauthorized: User not found' });
+    }
+
+    const data = await service.getSightings(req.user.uid);
     res.json(data);
   } catch (error: any) {
-    console.error('GET SIGHTINGS ERROR:', error);
     res.status(500).json({ error: error.message });
   }
 };

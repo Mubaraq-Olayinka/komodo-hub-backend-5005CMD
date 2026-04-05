@@ -30,4 +30,11 @@ router.patch(
   controller.gradeSubmission
 );
 
+router.get(
+  "/student",
+  verifyToken,
+  requireRole("student"),
+  controller.getStudentSubmissions
+);
+
 export default router;

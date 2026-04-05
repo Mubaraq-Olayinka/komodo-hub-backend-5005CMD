@@ -63,3 +63,17 @@ export const gradeSubmission = async (req: AuthRequest, res: Response) => {
     res.status(400).json({ error: error.message });
   }
 };
+
+export const getStudentSubmissions = async (req: AuthRequest, res: Response) => {
+  try {
+    if (!req.user) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    const data = await service.getStudentSubmissions(req.user.uid);
+
+    res.json(data);
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+};
