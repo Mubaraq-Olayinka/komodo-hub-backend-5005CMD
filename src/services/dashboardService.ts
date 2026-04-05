@@ -43,6 +43,7 @@ const getTeacherStats = async (teacherId: string) => {
     .where("teacherId", "==", teacherId)
     .get();
 
+  const classIds = classesSnap.docs.map((doc) => doc.id);
   let totalStudents = 0;
 
   for (const doc of classesSnap.docs) {
@@ -54,10 +55,20 @@ const getTeacherStats = async (teacherId: string) => {
     totalStudents += studentsSnap.size;
   }
 
+  const [speciesSnap, submissionsSnap] = await Promise.all([
+    db.collection("species").where("teacherId", "==", teacherId).get(),
+    db
+      .collection("submissions")
+      .where("classId", "in", classIds)
+      .get(),
+  ]);
+
   return {
     role: "teacher",
     classes: classesSnap.size,
     students: totalStudents,
+    species: speciesSnap.size,
+    submissions: submissionsSnap.size,
   };
 };
 
