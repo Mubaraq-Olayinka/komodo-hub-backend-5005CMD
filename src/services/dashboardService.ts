@@ -74,15 +74,43 @@ const getTeacherStats = async (teacherId: string) => {
 
 // ================= STUDENT =================
 const getStudentStats = async (userId: string, classIds: string[] = []) => {
-  const sightingsSnap = await db
-    .collection("sightings")
-    .where("userId", "==", userId)
-    .get();
+  const [sightingsSnap, submissionsSnap] = await Promise.all([
+    db.collection("sightings").where("userId", "==", userId).get(),
+    db.collection("submissions").where("userId", "==", userId).get(),
+  ]);
+
+  // Graded activities (submissions with a grade)
+  const gradedActivities = submissionsSnap.docs.filter(
+    (doc) => doc.data().grade !== undefined && doc.data().grade !== null
+  ).length;
+
+  // Enrolled class names
+  const classNames: string[] = [];
+  if (classIds.length > 0) {
+    const chunks = [];
+    for (let i = 0; i < classIds.length; i += 30) {
+      chunks.push(classIds.slice(i, i + 30));
+    }
+    for (const chunk of chunks) {
+      const classesSnap = await db
+        .collection("classes")
+        .where("__name__", "in", chunk)
+        .get();
+      classesSnap.docs.forEach((doc) => classNames.push(doc.data().name));
+    }
+  }
+
+  // Species discovered (unique species across all sightings)
+  const uniqueSpecies = new Set(
+    sightingsSnap.docs.map((doc) => doc.data().speciesId).filter(Boolean)
+  ).size;
 
   return {
     role: "student",
-    classes: classIds.length,
     sightings: sightingsSnap.size,
+    gradedActivities,
+    enrolledClasses: classNames,
+    uniqueSpeciesDiscovered: uniqueSpecies,
   };
 };
 

@@ -45,3 +45,22 @@ export const getTeacherActivities = async (
     res.status(500).json({ error: error.message });
   }
 };
+
+export const getStudentActivities = async (
+  req: AuthRequest,
+  res: Response
+) => {
+  try {
+    if (!req.user) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    const classIds: string[] = req.user.classIds ?? [];
+
+    const data = await service.getActivitiesByStudent(classIds);
+
+    res.json(data);
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+};

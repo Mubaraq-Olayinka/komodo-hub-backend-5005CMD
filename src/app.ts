@@ -13,6 +13,7 @@ import dashboardRoutes from './routes/dashboardRoutes';
 import activityRoutes from './routes/activityRoutes';
 import submissionRoutes from './routes/submissionRoutes';
 import messageRoutes from './routes/messageRoutes';
+import canvasRoutes from './routes/canvasRoutes';
 
 const app = express();
 
@@ -35,5 +36,6 @@ app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/activities', activityRoutes);
 app.use('/api/submissions', submissionRoutes);
 app.use('/api/messages', messageRoutes);
+app.use('/api/canvases', canvasRoutes);
 
 export default app;

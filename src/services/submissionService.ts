@@ -178,3 +178,27 @@ export const gradeSubmission = async (
 
   return { message: 'Submission graded successfully' };
 };
+
+export const getStudentSubmissions = async (studentId: string) => {
+  const submissionsSnap = await db
+    .collection("submissions")
+    .where("studentId", "==", studentId)
+    .orderBy("createdAt", "desc")
+    .get();
+
+  return submissionsSnap.docs.map((doc) => {
+    const data = doc.data();
+
+    return {
+      id: doc.id,
+      activityId: data.activityId,
+      activityTitle: data.activityTitle,
+      content: data.content,
+      fileUrl: data.fileUrl,
+      status: data.status,
+      grade: data.grade,
+      feedback: data.feedback,
+      createdAt: data.createdAt,
+    };
+  });
+};
