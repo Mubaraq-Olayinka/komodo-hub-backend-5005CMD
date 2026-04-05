@@ -12,6 +12,7 @@ import adminRoutes from './routes/adminRoutes';
 import dashboardRoutes from './routes/dashboardRoutes';
 import activityRoutes from './routes/activityRoutes';
 import submissionRoutes from './routes/submissionRoutes';
+import messageRoutes from './routes/messageRoutes';
 
 const app = express();
 
@@ -33,5 +34,6 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/activities', activityRoutes);
 app.use('/api/submissions', submissionRoutes);
+app.use('/api/messages', messageRoutes);
 
 export default app;
