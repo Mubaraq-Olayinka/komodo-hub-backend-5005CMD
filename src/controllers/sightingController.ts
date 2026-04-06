@@ -7,9 +7,15 @@ export const create = async (req: AuthRequest, res: Response) => {
     if (!req.user) {
       return res.status(401).json({ message: 'Unauthorized: User not found' });
     }
+
+    const { speciesName, location, description, imageUrl } = req.body;
+
     const id = await service.createSighting({
-      ...req.body,
-      userId: req.user!.uid,
+      userId: req.user.uid,
+      speciesName,
+      location,
+      description,
+      imageUrl,
       createdAt: new Date().toISOString(),
     });
 

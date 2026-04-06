@@ -1,7 +1,7 @@
 export interface Sighting {
   id?: string;
   userId: string;
-  species: string;
+  speciesName: string;
   location: string;
   imageUrl?: string;
   description?: string;
