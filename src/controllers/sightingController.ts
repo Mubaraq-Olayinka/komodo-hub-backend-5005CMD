@@ -15,7 +15,6 @@ export const create = async (req: AuthRequest, res: Response) => {
       speciesName,
       location,
       description,
-      imageUrl,
       createdAt: new Date().toISOString(),
     });
 
