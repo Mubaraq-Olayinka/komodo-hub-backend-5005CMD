@@ -8,6 +8,6 @@ router.get("/", controller.getAll);
 router.get("/org", verifyToken, controller.getByOrganization);
 router.get("/:id", controller.getById);
 router.post("/", verifyToken, requireRole('teacher'), controller.create);
-router.put("/:id", verifyToken, requireRole('teacher'), controller.update);
+// router.put("/:id", verifyToken, requireRole('teacher'), controller.update);
 
 export default router;
