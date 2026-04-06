@@ -4,5 +4,6 @@ export interface Sighting {
   species: string;
   location: string;
   imageUrl?: string;
+  description?: string;
   createdAt: string;
 }
